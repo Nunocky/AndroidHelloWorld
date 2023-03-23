@@ -1,29 +1,17 @@
 pipeline {
-    agent none
+    agent any
 
     stages {
-        stage('parallel') {
-            parallel {
-                stage("linux") {
-                    agent {
-                        label "macOS"
-                    }
-
-                    stages {
-                        stage("setup") {
+                        stage('setup') {
                             steps {
                                 sh "./script/docker_build.sh"
                             }
                         }
 
-                        stage("build") {
+                        stage('build') {
                             steps {
                                 sh "./script/run_command.sh ./script/build_apk.sh"
                             }
                         }
-                    }
-                }
-            }
-        }
     }
 }
