@@ -1,35 +1,21 @@
 #!/bin/bash
 
-WORK_DIR=`pwd`
-#USERNAME=$(id -un)
-USERNAME="builder"
-
-if [ $# -lt 1 ];then
-   OPTION_IT="-it"
+if [ $# -lt 1 ]; then
+  OPTION_IT="-it"
 else
-   OPTION_IT=""
+  OPTION_IT=""
 fi
 
+# TODO /opt/android-sdk-linux が空になってしまう ...?
 
-docker container run --rm  $OPTION_IT \
-       --name android_build_1 \
-       -v ${WORK_DIR}:${WORK_DIR} \
-       -w ${WORK_DIR} \
-       -e ANDROID_HOME="/home/${USERNAME}/Android" \
-       -e TZ="Asia/Tokyo" \
-       -v `pwd`/Android:/home/${USERNAME}/Android \
-       -v `pwd`/gradle:/home/${USERNAME}/.gradle \
-       android_build_test \
-       ${@:1}
+docker container run --rm "$OPTION_IT" \
+  --name android_build_1 \
+  -v $(pwd)/docker_volume_android_sdk:/opt/android-sdk-linux \
+  -v $(pwd)/docker_volume_gradle:/home/android/.gradle \
+  -v $(pwd):/tmp/project \
+  -w /tmp/project \
+  -e TZ="Asia/Tokyo" \
+  android_build \
+  ${@:1}
 
 # -v <host_path>:<container_path>
-
-
-# ホスト上のディレクトリを使用
-#       -v `pwd`/Android:/home/${USERNAME}/Android \
-#       -v `pwd`/gradle:/home/${USERNAME}/.gradle \
-
-
-# volumeを使うとロックファイルの取得に失敗する
-#       -v android_build_android_home:/home/${USERNAME}/Android \
-#       -v android_build_gradle:/home/${USERNAME}/gradle \
