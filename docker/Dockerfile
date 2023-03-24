@@ -5,6 +5,10 @@ ARG username="android"
 
 RUN chown -R $username:$username /opt/android-sdk-linux
 
+# 元コンテナにはホームディレクトリが用意されていない
+RUN mkdir -p /home/$username
+RUN chown $username:$username /home/$username
+
 # ここから先はユーザー $username に切り替えて作業
 USER $username
 RUN mkdir -p /home/$username/.gradle
